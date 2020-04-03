@@ -1,0 +1,52 @@
+<div class="card">
+  <div class="card-header">
+    {{componentName}}
+  </div>
+
+  <div class="input-group">
+    <div class="input-group-prepend">
+      <label class="input-group-text" for="inputGroupSelect01">Counterparty</label>
+    </div>
+
+    <select class="custom-select" id="inputGroupSelect01" *ngIf='counterparties' [(ngModel)]='counterparty'>
+      <option selected>Choose...</option>
+      <option *ngFor='let counterparty of counterparties' [ngValue]="counterparty">{{counterparty.name}}</option>
+    </select>
+    
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary" type="button" (click)='searchByCounterparty()'>Search</button>
+    </div>
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary" type="button" (click)='createNewTrade()'>New</button>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <table class="table table-striped" *ngIf='trades'>
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Counterparty</th>
+          <th scope="col">Direction</th>
+          <th scope="col">Product</th>
+          <th scope="col">Quantity</th>        
+          <th scope="col">Price</th>
+          <th scope="col">Date</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor='let trade of trades'>
+          <th scope="row">{{trade.tradeId}}</th>
+          <td>{{trade.counterpartyName}}</td>
+          <td>{{trade.direction}}</td>
+          <td>{{trade.product}}</td>
+          <td>{{trade.quantity}}</td>
+          <td>{{trade.price | currency}}</td>
+          <td>{{trade.date | date}}</td>
+          <td><a [routerLink]="['/trade', trade.tradeId]">Amend</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

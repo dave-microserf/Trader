@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.4.45" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Czarnikow.Trader.Application\Czarnikow.Trader.Application.csproj" />
+    <ProjectReference Include="..\Czarnikow.Trader.Core\Czarnikow.Trader.Core.csproj" />
+    <ProjectReference Include="..\Czarnikow.Trader.Infrastructure.Db\Czarnikow.Trader.Infrastructure.Db.csproj" />
+  </ItemGroup>
+
+
+</Project>

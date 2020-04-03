@@ -1,0 +1,54 @@
+<div class="card">
+  <div class="card-header">
+    {{componentName}}
+  </div>
+
+  <form *ngIf='trade' (ngSubmit)="submit()">
+    <div class="form-group">
+      <label for="counterparty">Counterparty</label>
+      <select class="form-control" id="counterparty" [(ngModel)]='trade.counterpartyName' name="counterparty">
+        <option *ngFor='let counterparty of counterparties'>{{counterparty}}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="product">Product</label>
+      <input class="form-control" id="product" type="text" [(ngModel)]='trade.product' name="product" maxlength="200">
+    </div>
+
+    <div class="form-group">
+      <label for="quantity">Quantity</label>
+      <input class="form-control" id="quantity" type="number" [(ngModel)]='trade.quantity' name="quantity">
+    </div>
+
+    <div class="form-group">
+      <label for="price">Price</label>
+      <input class="form-control" id="price" type="number" [(ngModel)]='trade.price' name="price">
+    </div>
+
+    <div class="form-group">
+      <label for="date">Date</label>
+      <input class="form-control" id="date"  [ngModel]="trade.date | date:'yyyy-MM-dd'" (ngModelChange)="trade.date = $event" type="date" name="date">
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="radio" id="buy" value="Buy" [(ngModel)]="trade.direction" name="buysell" checked>
+      <label class="form-check-label" for="buy">
+        Buy
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="radio" id="sell" value="Sell" [(ngModel)]="trade.direction" name="buysell">
+      <label class="form-check-label" for="sell">
+        Sell
+      </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      Submit
+    </button>
+
+    <button type="button" class="btn btn-link"><a [routerLink]="['/trades']">Back</a></button>
+  </form>
+</div>
