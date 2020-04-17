@@ -6,9 +6,9 @@
     using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
 
-    public sealed class IntegrationTestStrategy : DbContextOptionsStrategy, IDisposable
+    public sealed class IntegrationTestOptionsStrategy : DbContextOptionsStrategy, IDisposable
     {
-        public IntegrationTestStrategy()
+        public IntegrationTestOptionsStrategy()
         {
         }
 

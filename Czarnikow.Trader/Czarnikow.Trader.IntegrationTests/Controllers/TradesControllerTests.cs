@@ -19,14 +19,14 @@
     [TestFixture]
     public class TradesControllerTests
     {
-        private IntegrationTestStrategy strategy;
+        private IntegrationTestOptionsStrategy strategy;
         private TestServer testServer;
         private HttpClient client;
 
         [SetUp]
         public void Setup()
         {
-            this.strategy = new IntegrationTestStrategy();
+            this.strategy = new IntegrationTestOptionsStrategy();
 
             var builder = new WebHostBuilder()
                 .ConfigureServices(serviceCollection => serviceCollection.AddSingleton<IDbContextOptionsStrategy>(this.strategy))

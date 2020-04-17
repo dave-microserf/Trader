@@ -18,12 +18,12 @@
     public class CounterpartiesControllerTests
     {
         private HttpClient client;
-        private IntegrationTestStrategy strategy;
+        private IntegrationTestOptionsStrategy strategy;
 
         [SetUp]
         public void Setup()
         {
-            this.strategy = new IntegrationTestStrategy();
+            this.strategy = new IntegrationTestOptionsStrategy();
 
             var builder = new WebHostBuilder()
                 .ConfigureServices(serviceCollection => serviceCollection.AddSingleton<IDbContextOptionsStrategy>(this.strategy))
