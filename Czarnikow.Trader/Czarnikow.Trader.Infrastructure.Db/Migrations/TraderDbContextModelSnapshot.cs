@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Czarnikow.Trader.Infrastructure.Db.Migrations
 {
     [DbContext(typeof(TraderDbContext))]
-    partial class EntityFrameworkContextModelSnapshot : ModelSnapshot
+    partial class TraderDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

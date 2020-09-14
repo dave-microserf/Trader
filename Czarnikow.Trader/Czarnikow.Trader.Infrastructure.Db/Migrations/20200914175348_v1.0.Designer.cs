@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Czarnikow.Trader.Infrastructure.Db.Migrations
 {
     [DbContext(typeof(TraderDbContext))]
-    [Migration("20200912133347_v1.0")]
+    [Migration("20200914175348_v1.0")]
     partial class v10
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
