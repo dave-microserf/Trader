@@ -13,6 +13,7 @@ namespace Czarnikow.Trader.Api
 
     public class Startup
     {
+        // Should be in infrastructure??
         public static readonly string ConnectionString = "Data Source=.;Initial Catalog=TraderDb;Integrated Security=True";
 
         public Startup(IConfiguration configuration)
@@ -24,11 +25,11 @@ namespace Czarnikow.Trader.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();            
-            services.AddDbContext<RepositoryContext>(
+            services.AddDbContext<TraderDbContext>(
                 (serviceProvider, optionsBuilder) => serviceProvider.GetRequiredService<IDbContextOptionsStrategy>().Configure(optionsBuilder));
             
             services.AddScoped<IApplicationService, ApplicationService>();
-            services.AddScoped<IRepositoryContext, RepositoryContext>();
+            services.AddScoped<ITraderDbContext, TraderDbContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 

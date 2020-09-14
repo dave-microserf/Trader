@@ -4,50 +4,88 @@
 
     public class Trade : Entity<int?>
     {
-        public static Trade Create(int? tradeId, int counterpartyId, string product, int quantity, decimal price, DateTime date, Direction direction)
+        private Trade()
+        {       
+        }
+
+        public class Builder : Asserter
         {
-            if (tradeId.GetValueOrDefault(1) <= 0)
+            public int? Id
             {
-                throw new ArgumentException(nameof(tradeId));
+                get; set;
             }
 
-            if (counterpartyId <= 0)
+            public DateTime Date
             {
-                throw new ArgumentOutOfRangeException(nameof(counterpartyId));
+                get; set;
             }
 
-            if (string.IsNullOrEmpty(product) || product.Length > 200)
-            {
-                throw new ArgumentException(nameof(product));
+            public int CounterpartyId 
+            { 
+                get; set;
             }
 
-            if (quantity <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(quantity));
+            public string Product
+            { 
+                get; set; 
             }
 
-            if (price <= 0)
+            public int Quantity
             {
-                throw new ArgumentOutOfRangeException(nameof(price));
+                get; set;
             }
 
-            if (direction == null)
+            public decimal Price
             {
-                throw new ArgumentNullException(nameof(direction));
+                get; set;
             }
 
-            var trade = new Trade
+            public Direction Direction
             {
-                Id = tradeId,
-                CounterpartyId = counterpartyId,
-                Product = product,
-                Quantity = quantity,
-                Price = price,
-                Date = date,
-                Direction = (char)direction,
-            };
+                get; set;
+            }
 
-            return trade;
+            public Trade Build()
+            {
+                this.AddIfLessThan(nameof(this.CounterpartyId), this.CounterpartyId, 1);
+                ////this.AddIfLengthLessThan(nameof(this.Prod))
+
+                ////if (string.IsNullOrEmpty(product) || product.Length > 200)
+                ////{
+                ////    throw new ArgumentException(nameof(product));
+                ////}
+
+                ////if (quantity <= 0)
+                ////{
+                ////    throw new ArgumentOutOfRangeException(nameof(quantity));
+                ////}
+
+                ////if (price <= 0)
+                ////{
+                ////    throw new ArgumentOutOfRangeException(nameof(price));
+                ////}
+
+                ////if (direction == null)
+                ////{
+                ////    throw new ArgumentNullException(nameof(direction));
+                ////}
+
+                return new Trade()
+                {
+                    Id = this.Id,
+                    CounterpartyId = this.CounterpartyId,
+                    Product = this.Product,
+                    Quantity = this.Quantity,
+                    Price = this.Price,
+                    Date = this.Date,
+                    Direction = this.Direction.Identifier
+                };
+            }
+        }
+
+        public DateTime Date
+        {
+            get; private set;
         }
 
         public int CounterpartyId
@@ -70,15 +108,14 @@
             get; private set;
         }
 
-        public DateTime Date
-        {
-            get; private set;
-        }
-
         public char Direction
         {
             get; private set;
         }
 
+        public Counterparty Counterparty
+        {
+            get; private set;
+        }
     }
 }

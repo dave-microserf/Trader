@@ -1,12 +1,12 @@
-﻿namespace Czarnikow.Trader.Application.Requests
+﻿namespace Czarnikow.Trader.Application.Api
 {
     using System;
     using System.Text.Json.Serialization;
 
-    public class UpdateTradeRequest
+    public class CreateTrade
     {
-        [JsonPropertyName("tradeId")]
-        public int TradeId
+        [JsonPropertyName("date")]
+        public DateTime Date
         {
             get; set;
         }
@@ -31,12 +31,6 @@
 
         [JsonPropertyName("price")]
         public decimal Price
-        {
-            get; set;
-        }
-
-        [JsonPropertyName("date")]
-        public DateTime Date
         {
             get; set;
         }

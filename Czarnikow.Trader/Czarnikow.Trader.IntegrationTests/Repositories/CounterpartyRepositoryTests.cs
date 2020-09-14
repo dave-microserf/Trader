@@ -11,17 +11,17 @@
 
     public class CounterpartyRepositoryTests
     {
-        private RepositoryContext context;
+        private TraderDbContext context;
         private ICounterpartyRepository repository;
 
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<RepositoryContext>()
+            var options = new DbContextOptionsBuilder<TraderDbContext>()
                 .UseSqlServer(Startup.ConnectionString)
                 .Options;
 
-            this.context = new RepositoryContext(options);
+            this.context = new TraderDbContext(options);
             this.repository = new CounterpartyRepository(this.context);
         }
 

@@ -1,12 +1,14 @@
+import { ICounterparty } from './counterparty';
+
 // Rename to CounterpartyTrade
 export interface ITrade
 {
-    counterpartyId: number,
-    counterpartyName: string,
     tradeId: number,
+    date: Date,
+    counterpartyId: number,
     product: string,
     quantity: number,
     price: number,
-    date: Date,
     direction: string
+    counterparty: ICounterparty
 }

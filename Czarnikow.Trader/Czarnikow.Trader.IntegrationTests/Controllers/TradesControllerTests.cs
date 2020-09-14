@@ -1,19 +1,19 @@
 ﻿namespace Czarnikow.Trader.IntegrationTests.Controllers
 {
     using System;
-    using System.IO;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Text;
-    using System.Text.Json;
     using System.Threading.Tasks;
     using Czarnikow.Trader.Api;
-    using Czarnikow.Trader.Application.Requests;
-    using Czarnikow.Trader.Application.Responses;
+    using Czarnikow.Trader.Application.Api;
     using Czarnikow.Trader.Core.Domain;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.TestHost;
     using Microsoft.Extensions.DependencyInjection;
+    using Newtonsoft.Json;
     using NUnit.Framework;
 
     [TestFixture]
@@ -45,25 +45,17 @@
         }
 
         [Test]
-        public async Task GetTradeId1_ShouldReturnSuccessAndTradeResponse_Async()
+        public async Task GetTradeId1_ShouldReturnSuccessAndTrade_Async()
         {
             var httpResponseMessage = await this.client.GetAsync("/api/trades/1");
             var content = await httpResponseMessage.Content.ReadAsStringAsync();
 
             Assert.IsTrue(httpResponseMessage.IsSuccessStatusCode);
 
-            var utf8Json = new MemoryStream(Encoding.UTF8.GetBytes(content));
-            var trade = await JsonSerializer.DeserializeAsync<TradeResponse>(utf8Json);
+            var settings = new JsonSerializerSettings { ContractResolver = PrivateResolver.Default };
+            var trade = JsonConvert.DeserializeObject<Trade>(content, settings);
 
-            Assert.IsNotNull(trade);
-
-            Assert.AreEqual(1, trade.TradeId);
-            Assert.AreEqual(1, trade.CounterpartyId);
-            Assert.AreEqual("Sugar", trade.Product);
-            Assert.AreEqual(100, trade.Quantity);
-            Assert.AreEqual(400.50m, trade.Price);
-            Assert.AreEqual(new DateTime(2018, 1, 31), trade.Date);
-            Assert.AreEqual(Direction.Buy.Name, trade.Direction);
+            TradeAssert.IsTradeId1(trade);
         }
 
         [Test]
@@ -78,7 +70,7 @@
         [Test]
         public async Task Post_ShouldReturnCreated_Async()
         {
-            var request = new CreateTradeRequest
+            var request = new CreateTrade
             {
                 CounterpartyId = 1,
                 Product = "Sugar",
@@ -89,10 +81,9 @@
             };
 
             HttpResponseMessage httpResponseMessage;
-            var bytes = JsonSerializer.SerializeToUtf8Bytes(request);
+            var json = JsonConvert.SerializeObject(request, Formatting.Indented);
 
             var encoding = Encoding.UTF8;
-            var json = encoding.GetString(bytes);
             var content = new StringContent(json, encoding, "application/json");
 
             httpResponseMessage = await this.client.PostAsync("/api/trades", content);
@@ -106,9 +97,10 @@
             Assert.IsTrue(httpResponseMessage.IsSuccessStatusCode);
 
             var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
-            var utf8Json = new MemoryStream(Encoding.UTF8.GetBytes(responseContent));
 
-            var trade = await JsonSerializer.DeserializeAsync<TradeResponse>(utf8Json);
+            var settings = new JsonSerializerSettings { ContractResolver = PrivateResolver.Default };
+            var trade = JsonConvert.DeserializeObject<Trade>(responseContent, settings);
+
             Assert.IsNotNull(trade);
 
             Assert.AreEqual(1, trade.CounterpartyId);
@@ -116,13 +108,13 @@
             Assert.AreEqual(100, trade.Quantity);
             Assert.AreEqual(400m, trade.Price);
             Assert.AreEqual(new DateTime(2020, 2, 25), trade.Date);
-            Assert.AreEqual(Direction.Sell.Name, trade.Direction);
+            Assert.AreEqual(Direction.Sell.Identifier, trade.Direction);
         }
 
         [Test]
         public async Task Put_ShouldReturnCreated_Async()
         {
-            var request = new UpdateTradeRequest
+            var request = new UpdateTrade
             {
                 TradeId = 1,
                 CounterpartyId = 1,
@@ -134,10 +126,9 @@
             };
 
             HttpResponseMessage httpResponseMessage;
-            var bytes = JsonSerializer.SerializeToUtf8Bytes(request);
+            var json = JsonConvert.SerializeObject(request, Formatting.Indented);
 
             var encoding = Encoding.UTF8;
-            var json = encoding.GetString(bytes);
             var content = new StringContent(json, encoding, "application/json");
 
             httpResponseMessage = await this.client.PutAsync("/api/trades", content);
@@ -149,24 +140,25 @@
             Assert.IsTrue(httpResponseMessage.IsSuccessStatusCode);
 
             var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
-            var utf8Json = new MemoryStream(Encoding.UTF8.GetBytes(responseContent));
+            
+            var settings = new JsonSerializerSettings { ContractResolver = PrivateResolver.Default };
+            var trade = JsonConvert.DeserializeObject<Trade>(responseContent, settings);
 
-            var trade = await JsonSerializer.DeserializeAsync<TradeResponse>(utf8Json);
             Assert.IsNotNull(trade);
 
-            Assert.AreEqual(1, trade.TradeId);
+            Assert.AreEqual(1, trade.Id);
             Assert.AreEqual(1, trade.CounterpartyId);
             Assert.AreEqual("Sugar", trade.Product);
             Assert.AreEqual(100, trade.Quantity);
             Assert.AreEqual(400m, trade.Price);
             Assert.AreEqual(new DateTime(2020, 2, 25), trade.Date);
-            Assert.AreEqual(Direction.Sell.Name, trade.Direction);
+            Assert.AreEqual(Direction.Sell.Identifier, trade.Direction);
         }
 
         [Test]
         public async Task PutTradeId99_ShouldReturnNotFound_Async()
         {
-            var request = new UpdateTradeRequest
+            var request = new UpdateTrade
             {
                 TradeId = 99,
                 CounterpartyId = 1,
@@ -178,10 +170,9 @@
             };
 
             HttpResponseMessage httpResponseMessage;
-            var bytes = JsonSerializer.SerializeToUtf8Bytes(request);
+            var json = JsonConvert.SerializeObject(request, Formatting.Indented);
 
             var encoding = Encoding.UTF8;
-            var json = encoding.GetString(bytes);
             var content = new StringContent(json, encoding, "application/json");
 
             httpResponseMessage = await this.client.PutAsync("/api/trades", content);
@@ -209,6 +200,38 @@
 
             Assert.IsFalse(httpResponseMessage.IsSuccessStatusCode);
             Assert.AreEqual(HttpStatusCode.NotFound, httpResponseMessage.StatusCode);
+        }
+
+        [Test]
+        public async Task GetTradesForCounterpartyId1_ShouldReturnSuccessAndOneTrade_Async()
+        {
+            var httpResponseMessage = await this.client.GetAsync("/api/trades?counterpartyId=1");
+            var content = await httpResponseMessage.Content.ReadAsStringAsync();
+
+            Assert.IsTrue(httpResponseMessage.IsSuccessStatusCode);
+
+            var settings = new JsonSerializerSettings { ContractResolver = new PrivateResolver() };
+            var list = JsonConvert.DeserializeObject<List<Trade>>(content, settings);
+
+            Assert.AreEqual(1, list.Count);
+
+            TradeAssert.IsTradeId1(list.First());
+        }
+
+        [Test]
+        public async Task GetTradesForCounterpartyId2_ShouldReturnSuccessAndOneTrade_Async()
+        {
+            var httpResponseMessage = await this.client.GetAsync("/api/trades?counterpartyId=2");
+            var content = await httpResponseMessage.Content.ReadAsStringAsync();
+
+            Assert.IsTrue(httpResponseMessage.IsSuccessStatusCode);
+
+            var settings = new JsonSerializerSettings { ContractResolver = new PrivateResolver() };
+            var list = JsonConvert.DeserializeObject<List<Trade>>(content, settings);
+
+            Assert.AreEqual(1, list.Count);
+
+            TradeAssert.IsTradeId2(list.First());
         }
     }
 }

@@ -1,21 +1,19 @@
 ﻿namespace Czarnikow.Trader.Application.Interfaces
 {
-    using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Czarnikow.Trader.Application.Requests;
-    using Czarnikow.Trader.Application.Responses;
+    using Czarnikow.Trader.Application.Api;
+    using Czarnikow.Trader.Core.Interfaces;
 
     public interface IApplicationService
     {
-        Task<List<CounterpartyResponse>> GetCounterpartiesAsync();
+        IUnitOfWork UnitOfWork
+        {
+            get;
+        }
 
-        Task<List<CounterpartyTradeResponse>> GetCounterpartyTradesAsync(int counterpartyId);
+        Task<int> CreateTradeAsync(CreateTrade request);
 
-        Task<TradeResponse> GetTradeAsync(int tradeId);
-
-        Task<int> CreateTradeAsync(CreateTradeRequest request);
-
-        Task<bool> UpdateTradeAsync(UpdateTradeRequest request);
+        Task<bool> UpdateTradeAsync(UpdateTrade request);
 
         Task<bool> DeleteTradeAsync(int tradeId);
     }

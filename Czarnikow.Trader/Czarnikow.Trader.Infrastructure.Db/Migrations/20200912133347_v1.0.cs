@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Czarnikow.Trader.Infrastructure.Db.Migrations
 {
-    public partial class v1 : Migration
+    public partial class v10 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,13 +11,13 @@ namespace Czarnikow.Trader.Infrastructure.Db.Migrations
                 name: "Counterparty",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    CounterpartyId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(maxLength: 200, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("CounterpartyId", x => x.Id);
+                    table.PrimaryKey("PK_Counterparty", x => x.CounterpartyId);
                     table.UniqueConstraint("AK_Counterparty_Name", x => x.Name);
                     table.CheckConstraint("CK_Name", "LEN(Name) > 0");
                 });
@@ -26,18 +26,18 @@ namespace Czarnikow.Trader.Infrastructure.Db.Migrations
                 name: "Trade",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    TradeId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(nullable: false, defaultValueSql: "GETDATE()"),
                     CounterpartyId = table.Column<int>(nullable: false),
                     Product = table.Column<string>(maxLength: 200, nullable: false),
                     Quantity = table.Column<int>(nullable: false),
                     Price = table.Column<decimal>(nullable: false),
-                    Date = table.Column<DateTime>(nullable: false, defaultValueSql: "GETDATE()"),
-                    Direction = table.Column<string>(nullable: false)
+                    Direction = table.Column<string>(type: "CHAR(1)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("TradeId", x => x.Id);
+                    table.PrimaryKey("PK_Trade", x => x.TradeId);
                     table.CheckConstraint("CK_Product", "LEN(Product) > 0");
                     table.CheckConstraint("CK_Quantity", "Quantity >= 0");
                     table.CheckConstraint("CK_Price", "Price >= 0");
@@ -46,28 +46,28 @@ namespace Czarnikow.Trader.Infrastructure.Db.Migrations
                         name: "FK_Trade_Counterparty_CounterpartyId",
                         column: x => x.CounterpartyId,
                         principalTable: "Counterparty",
-                        principalColumn: "Id",
+                        principalColumn: "CounterpartyId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 table: "Counterparty",
-                columns: new[] { "Id", "Name" },
+                columns: new[] { "CounterpartyId", "Name" },
                 values: new object[] { 1, "Company A" });
 
             migrationBuilder.InsertData(
                 table: "Counterparty",
-                columns: new[] { "Id", "Name" },
+                columns: new[] { "CounterpartyId", "Name" },
                 values: new object[] { 2, "Company B" });
 
             migrationBuilder.InsertData(
                 table: "Trade",
-                columns: new[] { "Id", "CounterpartyId", "Date", "Direction", "Price", "Product", "Quantity" },
+                columns: new[] { "TradeId", "CounterpartyId", "Date", "Direction", "Price", "Product", "Quantity" },
                 values: new object[] { 1, 1, new DateTime(2018, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "B", 400.50m, "Sugar", 100 });
 
             migrationBuilder.InsertData(
                 table: "Trade",
-                columns: new[] { "Id", "CounterpartyId", "Date", "Direction", "Price", "Product", "Quantity" },
+                columns: new[] { "TradeId", "CounterpartyId", "Date", "Direction", "Price", "Product", "Quantity" },
                 values: new object[] { 2, 2, new DateTime(2018, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "S", 450.10m, "Sugar", 100 });
 
             migrationBuilder.CreateIndex(

@@ -4,16 +4,14 @@ using Czarnikow.Trader.Infrastructure.Db.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Czarnikow.Trader.Infrastructure.Db.Migrations
 {
-    [DbContext(typeof(RepositoryContext))]
-    [Migration("20200220213125_v1")]
-    partial class v1
+    [DbContext(typeof(TraderDbContext))]
+    partial class EntityFrameworkContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,6 +23,7 @@ namespace Czarnikow.Trader.Infrastructure.Db.Migrations
                 {
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("CounterpartyId")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:IdentityIncrement", 1)
                         .HasAnnotation("SqlServer:IdentitySeed", 1)
@@ -36,7 +35,7 @@ namespace Czarnikow.Trader.Infrastructure.Db.Migrations
                         .HasMaxLength(200);
 
                     b.HasKey("Id")
-                        .HasName("CounterpartyId");
+                        .HasName("PK_Counterparty");
 
                     b.HasAlternateKey("Name");
 
@@ -61,6 +60,7 @@ namespace Czarnikow.Trader.Infrastructure.Db.Migrations
                 {
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("TradeId")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:IdentityIncrement", 1)
                         .HasAnnotation("SqlServer:IdentitySeed", 1)
@@ -76,7 +76,7 @@ namespace Czarnikow.Trader.Infrastructure.Db.Migrations
 
                     b.Property<string>("Direction")
                         .IsRequired()
-                        .HasColumnType("nvarchar(1)");
+                        .HasColumnType("CHAR(1)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -90,7 +90,7 @@ namespace Czarnikow.Trader.Infrastructure.Db.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id")
-                        .HasName("TradeId");
+                        .HasName("PK_Trade");
 
                     b.HasIndex("CounterpartyId");
 

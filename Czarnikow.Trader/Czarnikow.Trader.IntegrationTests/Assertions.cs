@@ -1,4 +1,4 @@
-﻿namespace Czarnikow.Trader.IntegrationTests.Repositories
+﻿namespace Czarnikow.Trader.IntegrationTests
 {
     using System;
     using Czarnikow.Trader.Core.Domain;
@@ -36,6 +36,10 @@
             Assert.AreEqual(400.50m, trade.Price);
             Assert.AreEqual(new DateTime(2018, 1, 31), trade.Date);
             Assert.AreEqual(Direction.Buy.Identifier, trade.Direction);
+
+            Assert.IsNotNull(trade.Counterparty);
+            Assert.AreEqual(1, trade.Counterparty.Id);
+            Assert.AreEqual("Company A", trade.Counterparty.Name);
         }
 
         public static void IsTradeId2(Trade trade)
@@ -49,6 +53,10 @@
             Assert.AreEqual(450.10m, trade.Price);
             Assert.AreEqual(new DateTime(2018, 3, 31), trade.Date);
             Assert.AreEqual(Direction.Sell.Identifier, trade.Direction);
+
+            Assert.IsNotNull(trade.Counterparty);
+            Assert.AreEqual(2, trade.Counterparty.Id);
+            Assert.AreEqual("Company B", trade.Counterparty.Name);
         }
     }
 }

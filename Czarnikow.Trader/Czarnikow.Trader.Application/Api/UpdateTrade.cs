@@ -1,24 +1,24 @@
-﻿namespace Czarnikow.Trader.Application.Responses
+﻿namespace Czarnikow.Trader.Application.Api
 {
     using System;
     using System.Text.Json.Serialization;
 
-    public class CounterpartyTradeResponse
+    public class UpdateTrade
     {
-        [JsonPropertyName("counterpartyId")]
-        public int CounterpartyId
-        {
-            get; set;
-        }
-
-        [JsonPropertyName("counterpartyName")]
-        public string CounterpartyName
-        {
-            get; set;
-        }
-
         [JsonPropertyName("tradeId")]
         public int TradeId
+        {
+            get; set;
+        }
+
+        [JsonPropertyName("date")]
+        public DateTime Date
+        {
+            get; set;
+        }
+
+        [JsonPropertyName("counterpartyId")]
+        public int CounterpartyId
         {
             get; set;
         }
@@ -37,12 +37,6 @@
 
         [JsonPropertyName("price")]
         public decimal Price
-        {
-            get; set;
-        }
-
-        [JsonPropertyName("date")]
-        public DateTime Date
         {
             get; set;
         }

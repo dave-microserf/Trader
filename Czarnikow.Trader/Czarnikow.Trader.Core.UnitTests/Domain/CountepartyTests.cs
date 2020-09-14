@@ -11,7 +11,16 @@
         }
 
         [Test]
-        public void Constructor_ShouldSetProperties()
+        public void Constructor_WhenNew()
+        {
+            var counterparty = new Counterparty(null, "New Company"); 
+
+            Assert.IsNull(counterparty.Id);
+            Assert.AreEqual("New Company", counterparty.Name);
+        }
+
+        [Test]
+        public void Constructor_WhenExists()
         {
             var counterparty = new Counterparty(1, "Company A");
 

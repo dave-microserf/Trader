@@ -1,23 +1,22 @@
 ﻿namespace Czarnikow.Trader.Api.Controllers
 {
     using System;
-    using System.Text.Json;
     using System.Threading.Tasks;
+    using Czarnikow.Trader.Application.Api;
     using Czarnikow.Trader.Application.Interfaces;
-    using Czarnikow.Trader.Application.Requests;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
-    [Route("api/[controller]")]
+    [Route("api/trades")]
     [ApiController]
-    public class TradesController : ControllerBase
+    public class TradeController : ControllerBase
     {
-        private readonly ILogger<TradesController> logger;
+        private readonly ILogger<TradeController> logger;
         private readonly IApplicationService service;
 
-        public TradesController(
-            ILogger<TradesController> logger, 
+        public TradeController(
+            ILogger<TradeController> logger,
             IApplicationService service)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -33,7 +32,7 @@
         {
             try
             {
-                var trade = await this.service.GetTradeAsync(tradeId);
+                var trade = await this.service.UnitOfWork.TradeRepository.FindAsync(tradeId);
                 
                 if (trade != null)
                 {
@@ -44,7 +43,24 @@
             }
             catch (Exception exception)
             {
-                this.logger.LogError(exception, $"{Constants.ErrorMessage}. TradeId: {0}", tradeId);                
+                this.logger.LogError(exception, Request.Path);
+                return this.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        // GET: api/trades?counterpartyId=1
+        [HttpGet()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetTradesAsync([FromQuery]int counterpartyId)
+        {
+            try
+            {
+                return this.Ok(await this.service.UnitOfWork.TradeRepository.FindByCounterpartyAsync(counterpartyId));
+            }
+            catch (Exception exception)
+            {
+                this.logger.LogError(exception, Request.Path); 
                 return this.StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -54,7 +70,7 @@
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostAsync([FromBody] CreateTradeRequest request)
+        public async Task<IActionResult> PostAsync([FromBody] CreateTrade request)
         {
             try
             {
@@ -64,7 +80,7 @@
             }
             catch(Exception exception)
             {
-                this.logger.LogError(exception, $"{Constants.ErrorMessage}. Request: {0}", JsonSerializer.Serialize(request));
+                this.logger.LogError(exception, Request.Path);
                 return this.StatusCode(StatusCodes.Status500InternalServerError);
             }            
         }
@@ -73,7 +89,7 @@
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PutAsync([FromBody] UpdateTradeRequest request)
+        public async Task<IActionResult> PutAsync([FromBody] UpdateTrade request)
         {
             try
             {
@@ -88,7 +104,7 @@
             }
             catch (Exception exception)
             {
-                this.logger.LogError(exception, $"{Constants.ErrorMessage}. Request: {0}", JsonSerializer.Serialize(request));
+                this.logger.LogError(exception, Request.Path);
                 return this.StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -113,7 +129,7 @@
             }
             catch (Exception exception)
             {
-                this.logger.LogError(exception, $"{Constants.ErrorMessage}. TradeId: {0}", tradeId);
+                this.logger.LogError(exception, Request.Path);
                 return this.StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

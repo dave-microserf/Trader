@@ -8,11 +8,13 @@
     {
         Task<Trade> FindAsync(int tradeId);
 
-        void Add(Trade trade);
+        Task<List<Trade>> FindByCounterpartyAsync(int counterpartyId);
 
-        void Remove(Trade trade);
+        void Insert(Trade trade);
 
-        void Replace(Trade trade);
+        void Update(Trade trade);
+
+        void Delete(Trade trade);
 
         Task<List<Trade>> ListAsync();
     }

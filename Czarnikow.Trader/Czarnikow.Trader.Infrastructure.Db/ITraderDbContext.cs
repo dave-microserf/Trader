@@ -4,7 +4,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-    public interface IRepositoryContext
+    public interface ITraderDbContext
     {
         EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
 

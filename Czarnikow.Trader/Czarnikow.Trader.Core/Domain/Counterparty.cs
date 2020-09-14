@@ -3,7 +3,7 @@
     using System;
 
     public class Counterparty : Entity<int?>
-    {
+    {        
         private Counterparty()
         {
         }

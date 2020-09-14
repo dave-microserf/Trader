@@ -3,11 +3,10 @@
     using System;
     using System.Collections.ObjectModel;
 
-    public class ValidationErrors : Collection<string>
+    public class Asserter : Collection<string>
     {
         public void AddIfLessThan<T>(string name, T value, T minimum) where T : IComparable<T>
-        {
-            
+        {            
             if (name is null)
             {
                 throw new ArgumentNullException(nameof(name));

@@ -13,17 +13,17 @@
 
     public class TradeRepositoryTests
     {
-        private RepositoryContext context;
+        private TraderDbContext context;
         private ITradeRepository repository;
 
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<RepositoryContext>()
+            var options = new DbContextOptionsBuilder<TraderDbContext>()
                 .UseSqlServer(Startup.ConnectionString)
                 .Options;
 
-            this.context = new RepositoryContext(options);
+            this.context = new TraderDbContext(options);
             this.repository = new TradeRepository(this.context);
         }
 
@@ -65,12 +65,41 @@
             Assert.IsNull(trade);
         }
 
-        [Test, Rollback]
-        public async Task Add_ShouldInsertAsync()
-        {
-            var trade = Trade.Create(null, 1, "Sugar", 100, 100, DateTime.Now, Direction.Buy);
 
-            this.repository.Add(trade);
+        [Test]
+        public async Task FindByCounterpartyAsync_ShouldReturnTradesCounterpartyId1_Async()
+        {
+            var list = await this.repository.FindByCounterpartyAsync(1);
+
+            var trade = list.SingleOrDefault(trade => trade.Id == 1);
+
+            TradeAssert.IsTradeId1(trade);
+        }
+
+        [Test]
+        public async Task FindByCounterpartyAsync_ShouldReturnTradesCounterpartyId2_Async()
+        {
+            var list = await this.repository.FindByCounterpartyAsync(2);
+
+            var trade = list.SingleOrDefault(trade => trade.Id == 2);
+
+            TradeAssert.IsTradeId2(trade);
+        }
+
+        [Test, Rollback]
+        public async Task Insert_ShouldInsert_Async()
+        {
+            var trade = new Trade.Builder()
+            {
+                Date = DateTime.Now,
+                CounterpartyId = 1,
+                Product = "Sugar",
+                Quantity = 100,
+                Price = 100,
+                Direction = Direction.Buy
+            }.Build();
+
+            this.repository.Insert(trade);
             await this.context.SaveChangesAsync();
 
             var inserted = await this.repository.FindAsync(trade.Id.Value);
@@ -82,27 +111,27 @@
             Assert.AreEqual(trade.Price, inserted.Price);
             Assert.AreEqual(trade.Date, inserted.Date);
             Assert.AreEqual(trade.Direction, inserted.Direction);
+
+            Assert.IsNotNull(trade.Counterparty);
+            Assert.AreEqual("Company A", trade.Counterparty.Name);
+            Assert.AreEqual(1, trade.Counterparty.Id);
         }
 
         [Test, Rollback]
-        public async Task Remove_ShouldDelete_Async()
+        public async Task Update_ShouldUpdate_Async()
         {
-            var trade = await this.repository.FindAsync(1);
+            var trade = new Trade.Builder
+            {
+                Id = 1,
+                Date = DateTime.Now,
+                CounterpartyId = 2,
+                Product = "Spice",
+                Quantity = 100,
+                Price = 100,
+                Direction = Direction.Sell
+            }.Build();
 
-            this.repository.Remove(trade);
-            await this.context.SaveChangesAsync();
-
-            var deleted = await this.repository.FindAsync(1);
-
-            Assert.IsNull(deleted);
-        }
-
-        [Test, Rollback]
-        public async Task Replace_ShouldUpdate_Async()
-        {
-            var trade = Trade.Create(1, 2, "Spice", 100, 100, DateTime.Now, Direction.Sell);
-
-            this.repository.Replace(trade);
+            this.repository.Update(trade);
             await this.context.SaveChangesAsync();
 
             var updated = await this.repository.FindAsync(trade.Id.Value);
@@ -114,6 +143,19 @@
             Assert.AreEqual(trade.Price, updated.Price);
             Assert.AreEqual(trade.Date, updated.Date);
             Assert.AreEqual(trade.Direction, updated.Direction);
+        }
+
+        [Test, Rollback]
+        public async Task Delete_ShouldDelete_Async()
+        {
+            var trade = await this.repository.FindAsync(1);
+
+            this.repository.Delete(trade);
+            await this.context.SaveChangesAsync();
+
+            var deleted = await this.repository.FindAsync(1);
+
+            Assert.IsNull(deleted);
         }
     }
 }

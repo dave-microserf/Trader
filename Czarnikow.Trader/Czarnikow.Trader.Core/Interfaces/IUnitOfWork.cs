@@ -6,12 +6,7 @@
     public interface IUnitOfWork
     {
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-
-        IQueryRepository QueryRepository
-        {
-            get;
-        }
-
+        
         ICounterpartyRepository CounterpartyRepository
         { 
             get; 

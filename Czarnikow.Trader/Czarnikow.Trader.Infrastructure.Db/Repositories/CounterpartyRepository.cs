@@ -9,9 +9,9 @@
 
     public class CounterpartyRepository : ICounterpartyRepository
     {
-        private readonly IRepositoryContext context;
+        private readonly ITraderDbContext context;
 
-        public CounterpartyRepository(IRepositoryContext context)
+        public CounterpartyRepository(ITraderDbContext context)
         {
             this.context = context ?? throw new ArgumentNullException(nameof(context));            
         }
