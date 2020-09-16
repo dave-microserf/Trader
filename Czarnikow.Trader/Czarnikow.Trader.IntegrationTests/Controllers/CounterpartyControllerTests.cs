@@ -15,7 +15,7 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class CounterpartiesControllerTests
+    public class CounterpartyControllerTests
     {
         private HttpClient client;
         private IntegrationTestOptionsStrategy strategy;

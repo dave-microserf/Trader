@@ -17,7 +17,7 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class TradesControllerTests
+    public class TradeControllerTests
     {
         private IntegrationTestOptionsStrategy strategy;
         private TestServer testServer;

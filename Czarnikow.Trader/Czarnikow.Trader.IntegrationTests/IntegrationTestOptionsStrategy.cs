@@ -9,7 +9,18 @@
 
     public sealed class IntegrationTestOptionsStrategy : DbContextOptionsStrategy, IDisposable
     {
-        public static readonly ILoggerFactory MyLoggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
+        public static readonly ILoggerFactory LoggerFactoryInstance;
+
+        static IntegrationTestOptionsStrategy()
+        {
+            LoggerFactoryInstance = LoggerFactory.Create(builder => 
+            {
+                builder.AddConsole();
+            });
+
+            var logger = LoggerFactoryInstance.CreateLogger<IntegrationTestOptionsStrategy>();
+            logger.LogDebug("Test");
+        }
 
         public IntegrationTestOptionsStrategy()
         {
@@ -30,7 +41,7 @@
                 this.Connection = new SqlConnection(Startup.ConnectionString);
                 this.Connection.Open();
             }
-            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
+            optionsBuilder.UseLoggerFactory(LoggerFactoryInstance);
             optionsBuilder.UseSqlServer(this.Connection);
         }
 
